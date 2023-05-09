@@ -1,0 +1,121 @@
+Imports MySql.Data.MySqlClient
+Imports System.Data.Sql
+Imports System
+Imports System.Data
+Public Class Form1
+
+    Private Sub Button1_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Button1.Click
+        openCon()
+        'Try
+        '    cmd.Connection = con
+        '    cmd.CommandText = "INSERT INTO employee (`firstname`, `lastname`, `age`)"
+        '    VALUES('" & firstname.Text & "', '" & lastname.Text & "', '" & age.Text & "')"
+        '    cmd.ExecuteNonQuery()
+        '    MsgBox("Successfully Added")
+        '    con.Close()
+        '    firstname.Clear()
+        '    lastname.Clear()
+        '    age.Clear()
+
+        'Catch ex As Exception
+        '    MsgBox(ex.ToString)
+        'End Try
+        Try
+            cmd.Connection = con
+            cmd.CommandText = "insert into employee (firstname, lastname, age) values ('" + firstname.Text + "','" + lastname.Text + "','" + age.Text + "')"
+            cmd.ExecuteNonQuery()
+            MsgBox("Successfully Added")
+            con.Close()
+            firstname.Clear()
+            lastname.Clear()
+            age.Clear()
+
+        Catch ex As Exception
+            MsgBox(ex.ToString)
+        End Try
+    End Sub
+
+    Private Sub Button5_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Button5.Click
+        openCon()
+        Try
+            Dim adapter As New MySql.Data.MySqlClient.MySqlDataAdapter("SELECT * FROM employee ORDER BY firstname ASC", con)
+            Dim table As New DataTable()
+            adapter.Fill(table)
+            DataGridView1.DataSource = table
+            con.Close()
+        Catch ex As Exception
+            MsgBox(ex.ToString)
+        End Try
+    End Sub
+
+    Private Sub Button6_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Button6.Click
+        openCon()
+        Try
+            Dim adapter As New MySql.Data.MySqlClient.MySqlDataAdapter("SELECT * FROM employee ORDER BY firstname DESC", con)
+            Dim table As New DataTable()
+            adapter.Fill(table)
+            DataGridView1.DataSource = table
+            con.Close()
+        Catch ex As Exception
+            MsgBox(ex.ToString)
+        End Try
+    End Sub
+
+    Private Sub DataGridView1_CellContentClick(ByVal sender As System.Object, ByVal e As System.Windows.Forms.DataGridViewCellEventArgs) Handles DataGridView1.CellContentClick
+        Dim row As DataGridViewRow = DataGridView1.CurrentRow
+        Try
+            empid.Text = row.Cells(0).Value.ToString()
+            firstname.Text = row.Cells(1).Value.ToString()
+            lastname.Text = row.Cells(2).Value.ToString()
+            age.Text = row.Cells(3).Value.ToString()
+        Catch ex As Exception
+
+        End Try
+    End Sub
+
+    Private Sub Button4_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Button4.Click
+        con.Open()
+        Try
+            cmd = con.CreateCommand()
+            cmd.CommandText = "update employee set firstname=@firstname, lastname=@lastname, age=@age where empid=@empid;"
+            cmd.Parameters.AddWithValue("@empid", empid.Text)
+            cmd.Parameters.AddWithValue("@firstname", firstname.Text)
+            cmd.Parameters.AddWithValue("@lastname", lastname.Text)
+            cmd.Parameters.AddWithValue("@age", age.Text)
+            cmd.ExecuteNonQuery()
+            MsgBox("Data Updated")
+            empid.Clear()
+            firstname.Clear()
+            lastname.Clear()
+            age.Clear()
+            con.Close()
+        Catch ex As Exception
+            MsgBox(ex.ToString)
+        End Try
+    End Sub
+
+    Private Sub Button3_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Button3.Click
+        con.Open()
+        Try
+            cmd = con.CreateCommand()
+            cmd.CommandText = "delete from employee where empid=@empid;"
+            cmd.Parameters.AddWithValue("@empid", empid.Text)
+            'cmd.Parameters.AddWithValue("@firstname", firstname.Text)
+            'cmd.Parameters.AddWithValue("@lastname", lastname.Text)
+            'cmd.Parameters.AddWithValue("@age", age.Text)
+            cmd.ExecuteNonQuery()
+            MsgBox("Data Deleted")
+            empid.Clear()
+            firstname.Clear()
+            lastname.Clear()
+            age.Clear()
+            con.Close()
+        Catch ex As Exception
+            MsgBox(ex.ToString)
+        End Try
+    End Sub
+
+    Private Sub Form1_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
+
+    End Sub
+End Class
